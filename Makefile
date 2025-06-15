@@ -16,7 +16,7 @@ include $(DEVKITARM)/ds_rules
 # INCLUDES is a list of directories containing header files
 # SPECS is the directory containing the important build and link files
 #---------------------------------------------------------------------------------
-export TARGET	:=	b9s_check
+export TARGET	:=	3Deyellower
 BUILD		:=	build
 SOURCES		:=	source source/common source/fs source/crypto source/fatfs source/nand source/safety
 DATA		:=	data
@@ -33,7 +33,7 @@ CFLAGS	:=	-g -Wall -Wextra -Wpedantic -Wcast-align -Wno-main -O2\
 
 CFLAGS	+=	$(INCLUDE) -DARM9
 
-CFLAGS	+=	-DBUILD_NAME="\"$(TARGET) (`date +'%Y/%m/%d'`)\""
+CFLAGS	+=	-DBUILD_NAME="\"$(TARGET) $(date +'%Y/%m/%d')\""
 
 ifeq ($(FONT),ORIG)
 CFLAGS	+=	-DFONT_ORIGINAL

@@ -500,7 +500,7 @@ u64 ShowNumberPrompt(u64 start_val, const char *format, ...) {
     va_start(va, format);
     if (ShowInputPrompt(inputstr, 20 + 1, 1, alphabet, format, va)) {
         sscanf(inputstr, "%llu", &ret);
-    } else ret = (u64) -1;
+    } else ret = start_val;
     va_end(va);
     
     return ret; 
@@ -533,7 +533,7 @@ bool ShowDataPrompt(u8* data, u32* size, const char *format, ...) {
     return ret; 
 }
 
-bool ShowProgress(u64 current, u64 total, const char* opstr)
+bool ShowProgress(u64 current, u64 total, const char* opstr, bool redraw_box)
 {
     static u32 last_prog_width = 0;
     const u32 bar_width = 240;
@@ -546,19 +546,7 @@ bool ShowProgress(u64 current, u64 total, const char* opstr)
     char tempstr[64];
     char progstr[64];
     
-    static u64 last_sec_remain = 0;
-    if (!current) {
-        timer_start();
-        last_sec_remain = 0;
-    }
-    u64 sec_elapsed = (total > 0) ? timer_sec() : 0;
-    u64 sec_total = (current > 0) ? (sec_elapsed * total) / current : 0;
-    u64 sec_remain = (!last_sec_remain) ? (sec_total - sec_elapsed) : ((last_sec_remain + (sec_total - sec_elapsed) + 1) / 2);
-    if (sec_remain >= 60 * 60) sec_remain = 60 * 60 - 1;
-    last_sec_remain = sec_remain;
-    
-    if (!current || last_prog_width > prog_width) {
-        ClearScreenF(true, false, COLOR_STD_BG);
+    if (redraw_box) {
         DrawRectangle(TOP_SCREEN, bar_pos_x, bar_pos_y, bar_width, bar_height, COLOR_STD_FONT);
         DrawRectangle(TOP_SCREEN, bar_pos_x + 1, bar_pos_y + 1, bar_width - 2, bar_height - 2, COLOR_STD_BG);
     }
@@ -568,13 +556,6 @@ bool ShowProgress(u64 current, u64 total, const char* opstr)
     snprintf(tempstr, 64, "%.*s (%lu%%)", (int) (bar_width / FONT_WIDTH_EXT), progstr, prog_percent);
     ResizeString(progstr, tempstr, bar_width / FONT_WIDTH_EXT, 8, false);
     DrawString(TOP_SCREEN, progstr, bar_pos_x, text_pos_y, COLOR_STD_FONT, COLOR_STD_BG);
-    if (sec_elapsed >= 1) {
-        snprintf(tempstr, 16, "ETA %02llum%02llus", sec_remain / 60, sec_remain % 60);
-        ResizeString(progstr, tempstr, 16, 8, true);
-        DrawString(TOP_SCREEN, progstr, bar_pos_x + bar_width - 1 - (FONT_WIDTH_EXT * 16),
-            bar_pos_y - 10 - 1, COLOR_STD_FONT, COLOR_STD_BG);
-    }
-    DrawString(TOP_SCREEN, "(hold B to cancel)", bar_pos_x + 2, text_pos_y + 14, COLOR_STD_FONT, COLOR_STD_BG);
     
     last_prog_width = prog_width;
     
