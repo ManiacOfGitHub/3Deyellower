@@ -11,7 +11,7 @@ Blast your Nintendo 3DS screen with white for hours and pray that you don't dest
 
 Press `A` to start the torture, press `X` to access settings on the main menu, and press `B` or the power button at any time to power off.
 
-During the test, hold `A` to see a progress bar. The console will automatically power off when the process has completed.
+During the process, hold `A` to see a progress bar. The console will automatically power off when the process has completed.
 
 # Default Settings
 
