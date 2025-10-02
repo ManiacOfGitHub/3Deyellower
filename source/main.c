@@ -17,14 +17,14 @@ int x = 0, y = 0;
 bool top_on = true, bottom_on = true;
 uint64_t screen_on_length = 240; // minutes
 uint64_t screen_off_length = 10; // minutes
-int repetition_count = 3;
+int repetition_count = 12;
 bool progress_shown = false;
 
 void drawMainMenu()
 {
 	x = 0, y = 0;
 	ClearScreenF(true, true, COLOR_STD_BG);
-	DrawStringF(top_screen, x, y,  0xffffff, 0x000000, "3Deyellower by ManiacOfHomebrew"); y+=10;
+	DrawStringF(top_screen, x, y,  0xffffff, 0x000000, "3Deyellower v1.0.0 by ManiacOfHomebrew"); y+=10;
 	DrawStringF(top_screen, x, y,  0xffffff, 0x000000, "Top Screen / Bottom Screen: %s / %s", top_on ? "On" : "Off", bottom_on ? "On" : "Off"); y+=10;
 	DrawStringF(top_screen, x, y,  0xffffff, 0x000000, "Screen-On Length: %llu minutes", screen_on_length); y+=10;
 	DrawStringF(top_screen, x, y,  0xffffff, 0x000000, "Screen-Off Length: %llu minutes", screen_off_length); y+=10;
@@ -87,7 +87,7 @@ void main(int argc, char** argv)
 			}
 			drawMainMenu();
 		}
-		if (pad_state & BUTTON_B) {
+		if (pad_state & BUTTON_B || pad_state & BUTTON_POWER) {
 			powerOff();
 		}
 	}
@@ -106,22 +106,25 @@ void main(int argc, char** argv)
 		while(timer_sec() < screen_on_length * 60) {
 			if(CheckButton(BUTTON_A)) {
 				if(!progress_shown) {
-					powerBacklights(true, false);
 					ClearScreenF(true, true, COLOR_STD_BG);
+					powerBacklights(true, false);
 				}
 				ShowProgress(timer_sec(), screen_on_length * 60, "Screen-On Progress", !progress_shown);
 				progress_shown = true;
 				
 			} else {
 				if(progress_shown) {
-					powerBacklights(top_on, bottom_on);
 					ClearScreenF(top_on, bottom_on, COLOR_WHITE);
+					powerBacklights(top_on, bottom_on);
 					progress_shown = false;
 				}
 			}
-			if(CheckButton(BUTTON_B)) {
+			if(CheckButton(BUTTON_B) || i2cReadRegister(I2C_DEV_MCU, 0x10) == 0x01) { // Check for B or power
 				powerOff();
 			}
+		}
+		if(count == repetition_count - 1) {
+			powerOff();
 		}
 		powerBacklights(false, false);
 		progress_shown = false;
@@ -129,8 +132,8 @@ void main(int argc, char** argv)
 		while(timer_sec() < screen_off_length * 60) {
 			if(CheckButton(BUTTON_A)) {
 				if(!progress_shown) {
-					powerBacklights(true, false);
 					ClearScreenF(true, true, COLOR_STD_BG);
+					powerBacklights(true, false);
 				}
 				ShowProgress(timer_sec(), screen_off_length * 60, "Screen-Off Progress", !progress_shown);
 				progress_shown = true;
@@ -140,11 +143,11 @@ void main(int argc, char** argv)
 					progress_shown = false;
 				}
 			}
-			if(CheckButton(BUTTON_B)) {
+			if(CheckButton(BUTTON_B) || i2cReadRegister(I2C_DEV_MCU, 0x10) == 0x01) { // Check for B or power
 				powerOff();
 			}
 		}
 	}
 	
-	powerOff();
+	powerOff(); // Shouldn't be possible to reach here, but whatever.
 }
