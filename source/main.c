@@ -15,7 +15,7 @@ void powerOff()
 u8 *top_screen, *bottom_screen;
 int x = 0, y = 0;
 bool top_on = true, bottom_on = true;
-uint64_t screen_on_length = 240; // minutes
+uint64_t screen_on_length = 120; // minutes
 uint64_t screen_off_length = 10; // minutes
 int repetition_count = 12;
 bool progress_shown = false;
