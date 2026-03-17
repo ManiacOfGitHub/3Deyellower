@@ -24,7 +24,7 @@ void drawMainMenu()
 {
 	x = 0, y = 0;
 	ClearScreenF(true, true, COLOR_STD_BG);
-	DrawStringF(top_screen, x, y,  0xffffff, 0x000000, "3Deyellower v1.0.0 by ManiacOfHomebrew"); y+=10;
+	DrawStringF(top_screen, x, y,  0xffffff, 0x000000, "3Deyellower v1.0.1 by ManiacOfHomebrew"); y+=10;
 	DrawStringF(top_screen, x, y,  0xffffff, 0x000000, "Top Screen / Bottom Screen: %s / %s", top_on ? "On" : "Off", bottom_on ? "On" : "Off"); y+=10;
 	DrawStringF(top_screen, x, y,  0xffffff, 0x000000, "Screen-On Length: %llu minutes", screen_on_length); y+=10;
 	DrawStringF(top_screen, x, y,  0xffffff, 0x000000, "Screen-Off Length: %llu minutes", screen_off_length); y+=10;
